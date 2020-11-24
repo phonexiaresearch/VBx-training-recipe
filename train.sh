@@ -15,10 +15,11 @@ fbankdir=fbank
 plda_train_dir=data/plda_train
 min_len=400
 rate=16k
-voxceleb1_path=
-voxceleb2_dev_path=
-voxceleb_cn_path=
 all_data_dir=all_combined
+
+voxceleb1_path=/media/marvin/_datasets/transfer/jose/evaluation/VoxCeleb1-16k_01/data
+voxceleb2_dev_path=/media/marvin/_datasets/transfer/jose/evaluation/VoxCeleb2-16k_01/data/dev/aac
+voxceleb_cn_path=/media/marvin/_riders/jan.profant/tmp/CN-Celeb/data
 
 
 if [ ${stage} -le 1 ]; then
@@ -41,7 +42,7 @@ if [ ${stage} -le 1 ]; then
   # combine all data into one data directory
   utils/combine_data.sh data/${all_data_dir} data/voxceleb1 data/voxceleb2 data/voxcelebcn
 fi
-
+exit 0
 
 if [ ${stage} -le 2 ]; then
   # make mfccs from clean audios (will be only used to compute vad afterwards)
