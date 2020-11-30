@@ -11,10 +11,11 @@
 # conf/queue.conf in http://kaldi-asr.org/doc/queue.html for more information,
 # or search for the string 'default_config' in utils/queue.pl or utils/slurm.pl.
 
-queue_conf=conf/default.conf # see example /homes/kazi/iveselyk/queue_conf/default.conf,
-export train_cmd="queue.pl --config $queue_conf"
-export extract_cmd="queue.pl --config $queue_conf"
-export decode_cmd="queue.pl --config $queue_conf"
-export cuda_cmd="queue.pl --config $queue_conf"
-export feats_cmd="queue.pl --config $queue_conf"
+#queue_conf=conf/default.conf # see example /homes/kazi/iveselyk/queue_conf/default.conf,
+export train_cmd="run.pl" # --config $queue_conf"
+export vad_cmd="run.pl" # --config $queue_conf"
+export extract_cmd="run.pl" # --config $queue_conf"
+export decode_cmd="run.pl" # --config $queue_conf"
+export cuda_cmd="run.pl" # --config $queue_conf"
+export feats_cmd="run.pl" # --config $queue_conf"
 
