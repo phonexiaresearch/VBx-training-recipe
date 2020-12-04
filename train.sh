@@ -7,6 +7,7 @@
 
 if [ "$#" -ne 2 ]; then
   echo "Illegal number of parameters. Expecting egs directory and output directory."
+  exit 1
 fi
 
 egs_dir=$1

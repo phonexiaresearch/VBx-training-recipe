@@ -1,7 +1,14 @@
 #!/bin/bash
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2020 Phonexia
+# Author: Jan Profant <jan.profant@phonexia.com>
+# All Rights Reserved
+
 nnet_dir=exp/xvector_nnet
-stage=6
+stage=5
 train_stage=-1
 
 . ./cmd.sh || exit 1
@@ -18,6 +25,7 @@ rate=16k
 all_data_dir=all_combined
 
 # set directory for corresponding datasets
+#FIXME
 voxceleb1_path=/media/marvin/_datasets/transfer/jose/evaluation/VoxCeleb1-16k_01/data
 voxceleb2_dev_path=/media/marvin/_datasets/transfer/jose/evaluation/VoxCeleb2-16k_01/data/dev/aac
 voxceleb_cn_path=/media/marvin/_riders/jan.profant/tmp/CN-Celeb/data
@@ -49,27 +57,27 @@ if [ ${stage} -le 2 ]; then
   # in this stage, we compute VAD and prepare features for both clean and augmented audio
 
   # make mfccs from clean audios (will be only used to compute vad afterwards)
-  #steps/make_mfcc.sh --write-utt2num-frames true --mfcc-config conf/mfcc_${rate}.conf --nj 500 --cmd \
-  #  "${feats_cmd}" data/${all_data_dir} exp/make_fbank ${mfccdir}
-  #utils/fix_data_dir.sh data/${all_data_dir}
+  steps/make_mfcc.sh --write-utt2num-frames true --mfcc-config conf/mfcc_${rate}.conf --nj 500 --cmd \
+    "${feats_cmd}" data/${all_data_dir} exp/make_fbank ${mfccdir}
+  utils/fix_data_dir.sh data/${all_data_dir}
 
   # compute VAD for clean audio
-  #local/compute_vad_decision.sh --nj 500 --cmd \
-  #  "${vad_cmd}" data/${all_data_dir} exp/make_vad ${vaddir}
-  #utils/fix_data_dir.sh data/${all_data_dir}
+  local/compute_vad_decision.sh --nj 500 --cmd \
+    "${vad_cmd}" data/${all_data_dir} exp/make_vad ${vaddir}
+  utils/fix_data_dir.sh data/${all_data_dir}
 
   # make fbanks from clean audios
-  #steps/make_fbank.sh --write-utt2num-frames true --fbank-config conf/fbank_${rate}.conf --nj 500 --cmd \
-  #  "${feats_cmd}" data/${all_data_dir} exp/make_fbank ${fbankdir}
-  #utils/fix_data_dir.sh data/${all_data_dir}
+  steps/make_fbank.sh --write-utt2num-frames true --fbank-config conf/fbank_${rate}.conf --nj 500 --cmd \
+    "${feats_cmd}" data/${all_data_dir} exp/make_fbank ${fbankdir}
+  utils/fix_data_dir.sh data/${all_data_dir}
   
   # augment directory
-  #utils/augment_data_dir.sh ${all_data_dir}
+  utils/augment_data_dir.sh ${all_data_dir}
   
   # extract features from augmented data
-  #steps/make_fbank.sh --write-utt2num-frames true --fbank-config conf/fbank_${rate}.conf --nj 500 --cmd \
-  #  "${feats_cmd}" data/${all_data_dir}_aug exp/make_fbank ${fbankdir}
-  #utils/fix_data_dir.sh data/${all_data_dir}_aug
+  steps/make_fbank.sh --write-utt2num-frames true --fbank-config conf/fbank_${rate}.conf --nj 500 --cmd \
+    "${feats_cmd}" data/${all_data_dir}_aug exp/make_fbank ${fbankdir}
+  utils/fix_data_dir.sh data/${all_data_dir}_aug
 
   utils/combine_data.sh data/${all_data_dir}_aug_and_clean data/${all_data_dir}_aug data/${all_data_dir}
 fi
@@ -119,7 +127,7 @@ if [ ${stage} -le 4 ]; then
     --num-archives 1000 \
     --num-diagnostic-archives 1 \
     --num-repeats 10 \
-    data/${name}_with_aug_no_sil /media/ssd-local/profant/exp/egs
+    data/${name}_with_aug_no_sil /media/ssd-local/profant/exp/egs #FIXME
 fi
 
 
@@ -133,10 +141,10 @@ fi
 if [ ${stage} -le 6 ]; then
   # create data directory for training of PLDA
   # randomly pick one only clean or augmented utterance
-  #mkdir -p data/plda_train
-  #cp data/${name}_with_aug_no_sil/* data/plda_train
-  #python local/create_plda_train_dir.py --input-data-dir data/${name}_with_aug_no_sil --output-data-dir data/plda_train
-  #utils/fix_data_dir.sh data/plda_train
+  mkdir -p data/plda_train
+  cp data/${name}_with_aug_no_sil/* data/plda_train
+  python local/create_plda_train_dir.py --input-data-dir data/${name}_with_aug_no_sil --output-data-dir data/plda_train
+  utils/fix_data_dir.sh data/plda_train
 
   # extract embedding for PLDA training
   # hardcoded path to model, modify if needed
@@ -144,8 +152,9 @@ if [ ${stage} -le 6 ]; then
     --model exp/nnet/ResNet101_add_margin_embed256_2gpu/models/final.onnx \
     --kaldi-data-dir data/plda_train
     --emb-out-dir xvectors_plda_train
-  
-  
+
+  # train PLDA
+  cat xvectors_plda_train/*.txt | sort -k 1 | ivector-compute-plda ark:data/plda_train/spk2utt ark,cs,txt:- exp/plda
 fi
 
 exit 0
