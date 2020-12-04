@@ -45,7 +45,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpus', default='', type=str, help='use gpus (passed to CUDA_VISIBLE_DEVICES)')
     parser.add_argument('--model', required=True, type=str, help='path to pretrained model')
-    parser.add_argument('--ndim', required=True, type=int, default=64, help='dimensionality of features')
+    parser.add_argument('--ndim', required=False, type=int, default=64, help='dimensionality of features')
     parser.add_argument('--kaldi-data-dir', required=True, type=str, help='path to kaldi data directory')
     parser.add_argument('--emb-out-dir', required=True, type=str, help='output directory for storing embeddings')
     parser.add_argument('--continue-index', required=False, type=int, default=0, help='continue from last index')
