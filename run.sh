@@ -8,7 +8,7 @@
 # All Rights Reserved
 
 nnet_dir=exp/xvector_nnet
-stage=5
+stage=0
 train_stage=-1
 
 . ./cmd.sh || exit 1
@@ -25,10 +25,9 @@ rate=16k
 all_data_dir=all_combined
 
 # set directory for corresponding datasets
-#FIXME
-voxceleb1_path=/media/marvin/_datasets/transfer/jose/evaluation/VoxCeleb1-16k_01/data
-voxceleb2_dev_path=/media/marvin/_datasets/transfer/jose/evaluation/VoxCeleb2-16k_01/data/dev/aac
-voxceleb_cn_path=/media/marvin/_riders/jan.profant/tmp/CN-Celeb/data
+voxceleb1_path=
+voxceleb2_dev_path=
+voxceleb_cn_path=
 
 
 if [ ${stage} -le 1 ]; then
@@ -127,14 +126,18 @@ if [ ${stage} -le 4 ]; then
     --num-archives 1000 \
     --num-diagnostic-archives 1 \
     --num-repeats 10 \
-    data/${name}_with_aug_no_sil /media/ssd-local/profant/exp/egs #FIXME
+    data/${name}_with_aug_no_sil exp/egs
 fi
 
-
+num_gpus=2
 if [ ${stage} -le 5 ]; then
   # set all needed parameters in train.sh script
   # this will start NN training
   ./train.sh /media/ssd-local/profant/exp/egs exp/nnet
+
+  # convert pytoch model to onnx (much faster)
+  # if this end with error it should be fine, just check if onnx file is present
+  python local/convert_resnet2onnx.py -i exp/nnet/ResNet101_add_margin_embed256_${num_gpus}gpu/models/model_final -o exp/nnet/ResNet101_add_margin_embed256_${num_gpus}gpu/models/model_final.onnx
 fi
 
 
@@ -146,15 +149,26 @@ if [ ${stage} -le 6 ]; then
   python local/create_plda_train_dir.py --input-data-dir data/${name}_with_aug_no_sil --output-data-dir data/plda_train
   utils/fix_data_dir.sh data/plda_train
 
+  # split plda_train data dir to how many gpus you are gonna use for extraction
+  utils/split_data.sh data/plda_train/ ${num_gpus}
+  
   # extract embedding for PLDA training
   # hardcoded path to model, modify if needed
-  python local/predict.py 
-    --model exp/nnet/ResNet101_add_margin_embed256_2gpu/models/final.onnx \
-    --kaldi-data-dir data/plda_train
-    --emb-out-dir xvectors_plda_train
+  for i in $(seq 0 $((num_gpus-1)))
+  do
+    python local/predict.py \
+      --model exp/nnet/ResNet101_add_margin_embed256_${num_gpus}gpu/models/model_final.onnx \
+      --kaldi-data-dir data/plda_train/split${num_gpus}/$((i+1)) \
+      --emb-out-dir exp/xvectors_plda_train_$((i+1)) \
+      --gpus ${i} &
+  done
+  wait
 
   # train PLDA
-  cat xvectors_plda_train/*.txt | sort -k 1 | ivector-compute-plda ark:data/plda_train/spk2utt ark,cs,txt:- exp/plda
+  for i in $(seq 0 $((num_gpus-1)))
+  do
+    cat exp/xvectors_plda_train_$((i+1))/*.txt
+  done | ivector-compute-plda ark:data/plda_train/spk2utt ark,cs:- exp/plda
 fi
 
 exit 0
