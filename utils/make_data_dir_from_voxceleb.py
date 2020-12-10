@@ -1,10 +1,16 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2020 Phonexia
+# Author: Jan Profant <jan.profant@phonexia.com>
+# All Rights Reserved
+
 import argparse
 import csv
 import os
 
 
 def add_file(args, speaker, video_link, video_chunk, video_chunk_path):
-    #print(speaker, video_link, video_chunk, video_chunk_path)
     if args.format == 'wav':
         if not video_chunk_path.endswith('.wav'):
             return
