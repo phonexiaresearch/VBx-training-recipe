@@ -1,5 +1,5 @@
 # VBx-training-recipe
-Training recipe for VBx repository. @TODO link
+Training recipe for VBx repository. For results and more info please see [VBx](https://github.com/BUTSpeechFIT/VBx).
 
 ## Installation
 This is [Kaldi](https://github.com/kaldi-asr/kaldi) based recipe, using most of the tools from `egs/sre16/v2`, therefore it is required to have Kaldi compiled.
