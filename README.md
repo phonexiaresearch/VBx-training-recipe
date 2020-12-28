@@ -20,4 +20,9 @@ When set, you can run the main script:
 
 For more details see `run.sh`. If you are familiar with `sre16/v2` recipe, it should be straightforward.
 
-When making use of this repository, please cite: @TODO
+## Citations
+In case of using the software please cite:
+F. Landini, J. Profant, M. Diez, L. Burget: VBHMM as state-of-the-art diarization baseline on narrowband and wideband speech to be published soon.
+
+## Contact
+If you have questions regarding the training recipe, email jan.profant@phonexia.com
