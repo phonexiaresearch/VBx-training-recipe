@@ -12,6 +12,9 @@ cd VBx-training-recipe
 ```
 
 For NN training it is also needed to compile binary which converts egs into arks - `utils/nnet3-copy-egs-to-feats.cc`. Please, copy this source code into `KALDI/src/nnet3bin` and compile it.
+```bash
+cp utils/nnet3-copy-egs-to-feats.cc ../../../src/nnet3bin/
+```
 
 Please see `run.sh` script for basic overview, minimal modification is to set correct VoxCeleb directories for your setup [here](https://github.com/Jamiroquai88/VBx-training-recipe/blob/028526ef763b63d24bbbc5b2f1fb882c2ceb3581/run.sh#L28). 
 
