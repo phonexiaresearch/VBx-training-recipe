@@ -163,12 +163,15 @@ if [ ${stage} -le 6 ]; then
       --gpus ${i} &
   done
   wait
+fi
 
+
+if [ ${stage} -le 7 ]; then
   # train PLDA
   for i in $(seq 0 $((num_gpus-1)))
   do
     cat exp/xvectors_plda_train_$((i+1))/*.txt
-  done | ivector-compute-plda ark:data/plda_train/spk2utt ark,cs:- exp/plda
+  done | python local/train_transform.py --utt2spk data/plda_train/utt2spk --output-h5 exp/transform.h5 | ivector-compute-plda ark:data/plda_train/spk2utt ark,cs:- exp/plda
 fi
 
 exit 0
