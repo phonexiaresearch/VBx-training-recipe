@@ -34,7 +34,7 @@ export HOROVOD_GPU_ALLREDUCE=NCCL
 # final model trained using 6x RTX 2080Ti, modify batchsize accordingly
 horovodrun -np ${ngpus} --mpi --autotune \
     python local/train_pytorch_dnn.py --model ${model} \
-        --num-targets 8199 \
+        --num-targets 8178 \
         --dir ${out_dir}/${model}_${metric}_embed${embed_dim}_${ngpus}gpu \
         --metric ${metric} \
         --egs-dir ${egs_dir} \
