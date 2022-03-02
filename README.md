@@ -32,4 +32,4 @@ In case of using the software please cite:
 F. Landini, J. Profant, M. Diez, L. Burget: [*Bayesian HMM clustering of x-vector sequences (VBx) in speaker diarization: theory, implementation and analysis on standard tasks*](https://arxiv.org/abs/2012.14952)
 
 ## Contact
-If you have questions regarding the training recipe, email jan.profant@phonexia.com
+If you have questions regarding the training recipe, email jan.j.profant@gmail.com or michal.klco@phonexia.com.
