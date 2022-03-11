@@ -7,7 +7,6 @@ if [ ! -d "RIRS_NOISES" ]; then
 fi
 
 if [ ! -d "data/musan" ]; then
-  musan_dir=/media/marvin/_riders/_data/other/musan
   if [ ! -d ${musan_dir} ]; then
     echo "Can't find musan directory at ${musan_dir}"
   fi
