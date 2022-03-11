@@ -28,6 +28,7 @@ all_data_dir=all_combined
 voxceleb1_path=
 voxceleb2_dev_path=
 voxceleb_cn_path=
+export musan_dir=
 
 
 if [ ${stage} -le 1 ]; then
