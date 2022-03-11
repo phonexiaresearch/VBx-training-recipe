@@ -7,7 +7,7 @@ This is [Kaldi](https://github.com/kaldi-asr/kaldi) based recipe, using most of 
 From Kaldi root dir:
 ```bash
 cd egs/sre16
-git clone https://github.com/Jamiroquai88/VBx-training-recipe.git
+git clone https://github.com/phonexiaresearch/VBx-training-recipe.git
 cd VBx-training-recipe
 ```
 
